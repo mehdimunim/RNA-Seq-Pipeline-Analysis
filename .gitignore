@@ -1,13 +1,17 @@
-#Sequence files
+# Sequence files
 .fasta
 .fastq
 
-#Output files
+# Output files
 .out
 
-#Alignement files
+# Alignement files
 .bam
 .sam
+
+# Archive files
+.zip
+.tar.gz
 
 # History files
 .Rhistory
