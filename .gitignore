@@ -1,3 +1,14 @@
+#Sequence files
+.fasta
+.fastq
+
+#Output files
+.out
+
+#Alignement files
+.bam
+.sam
+
 # History files
 .Rhistory
 .Rapp.history
