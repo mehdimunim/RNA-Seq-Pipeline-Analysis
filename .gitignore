@@ -1,17 +1,28 @@
 # Sequence files
-.fasta
-.fastq
+*.fasta
+*.fastq
 
 # Output files
-.out
+*.out
+*.out.*
+
+# Annotation files
+*.gff
+*.gtf
 
 # Alignement files
-.bam
-.sam
+*.bam
+*.sam
 
 # Archive files
-.zip
-.tar.gz
+*.zip
+*.tar.gz
+
+# HTML Fastq reports
+*.html
+
+# genomeDIr
+genomeDir/*
 
 # History files
 .Rhistory
