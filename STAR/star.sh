@@ -1,13 +1,15 @@
-echo "Starting STAR";
+#!/bin/bash
+
 projet=..;
 ref_fasta=$projet/ref_genome/*.fasta;
-HNCWU=$projet/rnaseq_reads/Qm6a_Glucose_HNCWU_R1.fastq;
-HNCWW=$projet/rnaseq_reads/Qm6a_Glucose_HNCWW_R1.fastq;
-HNCWZ=$projet/rnaseq_reads/Qm6a_Lactose_HNCWZ_R1.fastq;
-HNCXA=$projet/rnaseq_reads/Qm6a_Glucose_HNCXA_R1.fastq;
+rnaseq=$projet/rnaseq_reads 
 genomeDir=$projet/genomeDir;
 annot=$projet/ref_genome/*.gff;
+
+echo "Starting STAR";
+
 echo "Generating Genome Indexes";
-#STAR --runThreadN 1 --sjdbGTFfile $annot --sjdbGTFfeatureExon CDS  --sjdbGTFtagExonParentTranscript Parent --runMode genomeGenerate --genomeDir $genomeDir  --genomeFastaFiles $ref_fasta;
+STAR --runThreadN 1 --sjdbGTFfile $annot --sjdbGTFfeatureExon CDS  --sjdbGTFtagExonParentTranscript Parent --runMode genomeGenerate --genomeDir $genomeDir  --genomeFastaFiles $ref_fasta;
+
 echo "Mapping RNASeq reads to genome";
-STAR --runThreadN 1 --genomeDir $genomeDir --readFilesIn $HNCWU;
+STAR --runThreadN 1 --genomeDir $genomeDir --readFilesIn $rnaseq/$1 --outSAMtype BAM SortedByCoordinate;
