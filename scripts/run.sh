@@ -1,7 +1,15 @@
 
 #!/bin/bash
-projet=..;
-ref_fasta=$projet/ref_genome/*.fasta;
-rnaseq=$projet/rnaseq_reads 
-genomeDir=$projet/genomeDir;
-annot=$projet/ref_genome/*.gff;
+ref_genome=../ref_genome
+rnaseq=../rnaseq_reads
+
+annot=$ref_genome/*.gff
+ref_fasta=$ref_genome/*.fasta
+
+# loop on all file in RNASEQ 
+for file in $rnaseq/*; do
+    star.sh $ref_fasta $file $annot 
+    samtools.sh 
+    htseq.sh
+    # rm temp outputs
+    done
