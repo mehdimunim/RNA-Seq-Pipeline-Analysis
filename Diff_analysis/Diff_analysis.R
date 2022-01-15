@@ -5,9 +5,10 @@
 rm(list=ls())
 
 
-## Install DESeq2 if needed
+## Install required packages
 #if (!require(BiocManager)) install.packages('BiocManager')
 #BiocManager::install("DESeq2")
+#BiocManager::install("apeglm")
 library('DESeq2')
 
 ## Input directory
@@ -29,10 +30,22 @@ ddsHTSeq <- DESeqDataSetFromHTSeqCount(sampleTable = sampleTable,
                                        directory = directory,
                                        design= ~ condition)
 
-ddsHTSeq <- DESeq(ddsHTSeq, test = "Wald", fitType = "mean")
+ddsHTSeq <- DESeq(ddsHTSeq, test = "Wald", fitType = "mean", parallel = FALSE, BPPARAM = bpparam())
 ## Summarizing results
 res <- results(ddsHTSeq , alpha = 0.1)
 summary(res)
 
+## Order results by the smallest p-value
+resOrdered <- res[order(res$pvalue),]
+
+## LFC Shrinkage
+resLFC <- lfcShrink(ddsHTSeq, coef=2)
+
+
 ## MA Plot
-plotMA(res, ylim=c(-2,2))
+plotMA(res, ylim=c(-5,5))
+plotMA(resLFC, ylim=c(-5,5))
+
+## Exporting results
+write.csv(as.data.frame(resOrdered), 
+          file="Qm6a_Glucose_Lactose_results.csv")
