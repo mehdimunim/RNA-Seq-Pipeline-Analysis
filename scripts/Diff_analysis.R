@@ -17,7 +17,7 @@ library(ReportingTools)
 if (!require(rstudioapi))
   install.packages('rstudioapi')
 setwd(dirname(rstudioapi::getSourceEditorContext()$path))
-directory <- "../HTSEQ"
+directory <- "../counts"
 
 ## Loading htseq-count files
 sampleFiles <- list.files(directory, pattern = "*.tsv")
