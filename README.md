@@ -1,5 +1,5 @@
 # RNA-Seq-Pipeline-Analysis
- Building a RNA-Seq pipeline analysis for Trichoderma reese with existing bioinformatics tools.  
+ Building a RNA-Seq pipeline analysis for Trichoderma reesei with existing bioinformatics tools.  
 
 ## Use
 First place the data fastq files in the rnseq_read folder, and the genome and annotation in the ref_genome folder.
