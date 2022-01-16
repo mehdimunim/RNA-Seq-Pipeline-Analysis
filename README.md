@@ -17,3 +17,4 @@ Finally, launch the R script to get the RNASeq analysis results (DESeq2).
 - Htseq-count
 - R : 
 	- DESeq2
+	- ReportingTools

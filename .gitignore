@@ -21,6 +21,9 @@
 # HTML Fastq reports
 *.html
 
+# Report file 
+reports/*
+
 # genomeDIr
 genomeDir/*
 

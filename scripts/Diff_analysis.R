@@ -1,6 +1,6 @@
 # Analyse différentielle du champignon Trichoderma en utilisant DESeq2
-# source : https://bioconductor.riken.jp/packages/3.6/bioc/vignettes/DESeq2/inst/doc/DESeq2.html
-
+# sources : https://bioconductor.riken.jp/packages/3.6/bioc/vignettes/DESeq2/inst/doc/DESeq2.html
+#           https://bioconductor.org/packages/release/bioc/vignettes/ReportingTools/inst/doc/rnaseqAnalysis.pdf
 ## Clean memory
 rm(list = ls())
 
@@ -9,7 +9,8 @@ rm(list = ls())
 #if (!require(BiocManager)) install.packages('BiocManager')
 #BiocManager::install("DESeq2")
 #BiocManager::install("apeglm")
-library('DESeq2')
+library(DESeq2)
+library(ReportingTools)
 
 ## Input directory
 ### set projet directory as working directory
@@ -24,7 +25,7 @@ sampleCondition <- c("glucose", "glucose", "lactose", "lactose")
 sampleTable <- data.frame(sampleName = sampleFiles,
                           fileName = sampleFiles,
                           condition = sampleCondition)
-sampleTable$condition <- factor(sampleTable$condition)
+sampleTable$condition <- factor(sampleTable$condition, levels=c("glucose", "lactose"))
 
 # Building DESEQ2
 ddsHTSeq <- DESeqDataSetFromHTSeqCount(
@@ -32,7 +33,7 @@ ddsHTSeq <- DESeqDataSetFromHTSeqCount(
   directory = directory,
   design = ~ condition
 )
-
+                                          
 ddsHTSeq <-
   DESeq(
     ddsHTSeq,
@@ -52,10 +53,15 @@ resOrdered <- res[order(res$pvalue),]
 resLFC <- lfcShrink(ddsHTSeq, coef = 2)
 
 
-## MA Plot
-plotMA(res, ylim = c(-5, 5))
-plotMA(resLFC, ylim = c(-5, 5))
+## MA Plot with shrinkag
+plotMA(resLFC, main = "MA Plot after LFC Shrinkage", ylim = c(-5, 5))
 
-## Exporting results
+
+## Exporting results tO CSV
 write.csv(as.data.frame(resOrdered),
-          file = "Qm6a_Glucose_Lactose_results.csv")
+          file = "../reports/Qm6a_Glucose_Lactose_results.csv")
+
+## Writing report
+des2Report <- HTMLReport(shortName = 'RNAseq_analysis_with_DESeq2', title = 'RNA-seq analysis of differential expression using DESeq2', reportDirectory = "../reports")
+publish(ddsHTSeq,des2Report, pvalueCutoff=0.1, annotation.db="org.Mm.eg.db", factor = colData(ddsHTSeq)$condition,reportDir="../reports")
+finish(des2Report)

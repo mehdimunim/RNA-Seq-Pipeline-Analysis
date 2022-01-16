@@ -22,4 +22,7 @@ for file in $rnaseq/*; do
     ./htseq.sh $filename $annot
     done
 
+# modify TSV by replacing | with _ (needed for R reports)
+./edit_tsv.sh
+
 echo "Ending RNASeq Analysis Pipeline"
