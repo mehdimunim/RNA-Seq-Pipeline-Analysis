@@ -9,13 +9,13 @@ rm(list = ls())
 #if (!require(BiocManager)) install.packages('BiocManager')
 #BiocManager::install("DESeq2")
 #BiocManager::install("apeglm")
+#if (!require(rstudioapi))
+#install.packages('rstudioapi')
 library(DESeq2)
 library(ReportingTools)
 
 ## Input directory
 ### set projet directory as working directory
-if (!require(rstudioapi))
-  install.packages('rstudioapi')
 setwd(dirname(rstudioapi::getSourceEditorContext()$path))
 directory <- "../counts"
 
@@ -25,7 +25,8 @@ sampleCondition <- c("glucose", "glucose", "lactose", "lactose")
 sampleTable <- data.frame(sampleName = sampleFiles,
                           fileName = sampleFiles,
                           condition = sampleCondition)
-sampleTable$condition <- factor(sampleTable$condition, levels=c("glucose", "lactose"))
+### the reference level is glucose as is it before lactose in the alphabetic order
+sampleTable$condition <- factor(sampleTable$condition)
 
 # Building DESEQ2
 ddsHTSeq <- DESeqDataSetFromHTSeqCount(
@@ -43,18 +44,18 @@ ddsHTSeq <-
     BPPARAM = bpparam()
   )
 ## Summarizing results
-res <- results(ddsHTSeq , alpha = 0.1)
+pCutoff <- 0.05
+res <- results(ddsHTSeq , alpha = pCutoff, lfcThreshold = 2, altHypothesis = "greater")
 summary(res)
 
 ## Order results by the smallest p-value
 resOrdered <- res[order(res$pvalue),]
 
 ## LFC Shrinkage
-resLFC <- lfcShrink(ddsHTSeq, coef = 2)
+#resLFC <- lfcShrink(ddsHTSeq, coef = 2)
 
-
-## MA Plot with shrinkag
-plotMA(resLFC, main = "MA Plot after LFC Shrinkage", ylim = c(-5, 5))
+## MA Plot with shrinkage
+plotMA(res, main = "MA Plot", ylim = c(-16, 16))
 
 
 ## Exporting results tO CSV
@@ -63,5 +64,6 @@ write.csv(as.data.frame(resOrdered),
 
 ## Writing report
 des2Report <- HTMLReport(shortName = 'RNAseq_analysis_with_DESeq2', title = 'RNA-seq analysis of differential expression using DESeq2', reportDirectory = "../reports")
-publish(ddsHTSeq,des2Report, pvalueCutoff=0.1, annotation.db="org.Mm.eg.db", factor = colData(ddsHTSeq)$condition,reportDir="../reports")
+publish(ddsHTSeq,des2Report, pvalueCutoff=pCutoff, annotation.db="org.Mm.eg.db", factor = colData(ddsHTSeq)$condition,reportDir="../reports")
 finish(des2Report)
+
